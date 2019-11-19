@@ -177,7 +177,7 @@ def backPropagate(self, targets):
         return error
 ```
 
-1. Training fuction and Showing the result figure: Send the training data into `trainAndShowError(self, train_data)`and shuffling the training data. Put the train data array to forwarding function, reciving the error value from back propagate function. Now we have error values from first to last iterations, and thus we can append the error array using these value. Finally show up the training error figure as result.
+1. Training function and Showing the result figure: Send the training data into `trainAndShowError(self, train_data)`and shuffling the training data. Put the train data array to forwarding function, reciving the error value from back propagate function. Now we have error values from first to last iterations, and thus we can append the error array using these value. Finally show up the training error figure as result.
 
 ``` python=110
 def trainAndShowError(self, train_data):
