@@ -25,6 +25,8 @@ class MLP(object):
         # initialize parameters
         self.iterations = iterations
         self.learning_rate = learning_rate
+
+        # momentum is used for escaping from local minimum situation
         self.momentum = momentum
 
         # initialize arrays
@@ -76,23 +78,23 @@ class MLP(object):
             raise ValueError('Wrong number of targets!')
 
         # calculate error terms for output
-        # the delta (theta) tell which direction to change the weights
+        # delta tells which direction to change the weights
         output_deltas = DerivativeSigmoid(
             self.activation_output) * -(targets - self.activation_output)
 
         # calculate error terms for hidden
-        # delta (theta) tells which direction to change the weights
+        # delta tells which direction to change the weights
         error = np.dot(self.weight_output, output_deltas)
         hidden_deltas = DerivativeTanh(self.activation_hidden) * error
 
-        # update the weights connecting hidden to output, change == partial derivative
+        # update the weights connecting hidden to output, 'change' is partial derivative
         change = output_deltas * np.reshape(self.activation_hidden,
                                             (self.activation_hidden.shape[0], 1))
         self.weight_output -= self.learning_rate * \
             change + self.temporary_output * self.momentum
         self.temporary_output = change
 
-        # update the weights connecting input to hidden, change == partial derivative
+        # update the weights connecting input to hidden, 'change' is partial derivative
         change = hidden_deltas * \
             np.reshape(self.activation_input,
                        (self.activation_input.shape[0], 1))
@@ -100,7 +102,7 @@ class MLP(object):
             change + self.temporary_input * self.momentum
         self.temporary_input = change
 
-        # calculate error
+        # calculate error (using mean squared error function)
         error = sum((1 / self.output) * (targets - self.activation_output)**2)
 
         return error
@@ -120,12 +122,12 @@ class MLP(object):
 
             Error.append(error)
 
-        # show the error figure
+        # show the training error figure
         plt.figure()
         plt.plot(range(self.iterations), Error, 'r-', label="train error")
         plt.title('Perceptron training')
         plt.xlabel('Epochs')
-        plt.ylabel('Error')
+        plt.ylabel('Training Error')
         plt.legend()
         plt.show()
 
@@ -133,6 +135,7 @@ class MLP(object):
 def InputGenerator(inputs):
     # referrence from https://en.wikipedia.org/wiki/Hamming_weight
     # and http://p-nand-q.com/python/algorithms/math/bit-parity.html
+
     def BitParityCal(i):
         i = i - ((i >> 1) & 0x55555555)
         i = (i & 0x33333333) + ((i >> 2) & 0x33333333)
